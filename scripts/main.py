@@ -4,6 +4,34 @@ import pandas as pd
 import numpy as np
 
 
+def check_route_is_feasible(route, service_start_times, customers, capacity):
+    arrived_within_time_window = True
+    capacity_required = customers.loc[route[1:-1], "demand"].sum()
+    capacity_is_doable = capacity_required < capacity
+    if capacity_is_doable:
+        for stop, service_start_time in enumerate(service_start_times):
+            this_customer = route[stop + 1]
+            arrived_within_time_window = (
+                service_start_time >= customers.loc[this_customer, "earliest"]
+                and service_start_time < customers.loc[this_customer, "latest"]
+            )
+            if not arrived_within_time_window:
+                break
+    feasible = capacity_is_doable and arrived_within_time_window
+    return feasible
+
+
+def check_routes_are_feasible(routes, t_k_i, customers, capacity):
+    for route, service_start_times in zip(routes, t_k_i):
+        feasible = check_route_is_feasible(
+            route, service_start_times, customers, capacity
+        )
+        if not feasible:
+            break
+    print("Route is feasible" if feasible else "Route is not feasible")
+    return feasible
+
+
 def main():
     # Parse instance
     kind = "rc"
@@ -91,11 +119,11 @@ def main():
         current_time = 0
         service_start_times = []
         for i in range(len(route) - 2):
-            current_time += all_times.loc[route[i], route[i+1]]
-            if current_time < customers.loc[route[i+1], 'earliest']: 
-                current_time = customers.loc[route[i+1], 'earliest']
+            current_time += all_times.loc[route[i], route[i + 1]]
+            if current_time < customers.loc[route[i + 1], "earliest"]:
+                current_time = customers.loc[route[i + 1], "earliest"]
             service_start_times.append(current_time)
-            current_time += customers.loc[route[i+1], 'cost']
+            current_time += customers.loc[route[i + 1], "cost"]
         reconstructed_t_k_i.append(service_start_times)
 
     # verify the t_k_is are the same
@@ -108,27 +136,8 @@ def main():
     #             are_the_same = False
     # print('The lists are the same' if are_the_same else 'The lists differ')
 
-
     # Check if routes are indeed feasible
-    capacity_is_doable = True
-    arrived_within_time_window = True
-    for route, service_start_times in zip(routes, t_k_i):
-        capacity_required = customers.loc[route[1:-1], "demand"].sum()
-        capacity_is_doable = capacity_required < capacity
-        if not capacity_is_doable:
-            break
-        for stop, service_start_time in enumerate(service_start_times):
-            this_customer = route[stop + 1]
-            arrived_within_time_window = (
-                service_start_time >= customers.loc[this_customer, "earliest"]
-                and service_start_time < customers.loc[this_customer, "latest"]
-            )
-            if not arrived_within_time_window:
-                break
-    feasible = capacity_is_doable and arrived_within_time_window
-    print('Route is feasible' if feasible else "Route is not feasible")
-    
-
+    check_routes_are_feasible(routes, t_k_i, customers, capacity)
 
 
 if __name__ == "__main__":
