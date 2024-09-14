@@ -4,6 +4,24 @@ import pandas as pd
 import numpy as np
 
 
+def plot_instance(depot, customers):
+    plt.figure()
+    plt.plot(depot["x"], depot["y"], "ko")
+    plt.plot(customers["x"], customers["y"], "bo")
+    plt.show()
+
+
+def calculate_times_matrix(all_points):
+    all_times = pd.DataFrame(index=all_points.index, columns=all_points.index)
+    for i in all_points.index:
+        for j in all_points.index:
+            all_times.loc[i, j] = np.sqrt(
+                (all_points.loc[i, "x"] - all_points.loc[j, "x"]) ** 2
+                + (all_points.loc[i, "y"] - all_points.loc[j, "y"]) ** 2
+            )
+    return all_times
+
+
 def check_route_is_feasible(route, service_start_times, customers, capacity):
     arrived_within_time_window = True
     capacity_required = customers.loc[route[1:-1], "demand"].sum()
@@ -21,48 +39,13 @@ def check_route_is_feasible(route, service_start_times, customers, capacity):
     return feasible
 
 
-def check_routes_are_feasible(routes, t_k_i, customers, capacity):
-    for route, service_start_times in zip(routes, t_k_i):
-        feasible = check_route_is_feasible(
-            route, service_start_times, customers, capacity
-        )
-        if not feasible:
-            break
-    print("Route is feasible" if feasible else "Route is not feasible")
-    return feasible
-
-
-def main():
-    # Parse instance
-    kind = "rc"
-    kind_type = "1"
-    case_number = 1
-    data = parse_instance(kind, kind_type, case_number)
-    instance_name, vehicle_nr, capacity, all_points = data
-    depot = all_points.iloc[0]
-    customers = all_points.iloc[1:]
-
-    # Plot instance
-    # plt.figure()
-    # plt.plot(depot['x'], depot['y'], 'ko')
-    # plt.plot(customers['x'], customers['y'], 'bo')
-    # plt.show()
-
-    all_times = pd.DataFrame(index=all_points.index, columns=all_points.index)
-    for i in all_points.index:
-        for j in all_points.index:
-            all_times.loc[i, j] = np.sqrt(
-                (all_points.loc[i, "x"] - all_points.loc[j, "x"]) ** 2
-                + (all_points.loc[i, "y"] - all_points.loc[j, "y"]) ** 2
-            )
-
-    # Apply nearest neighbor heuristic
+def nearest_neighbors_heuristic(all_times, customers, capacity):
     routes = []
     t_k_i = []
     pending_customers = customers.copy()
 
     while len(pending_customers) > 0:
-        print("-- Doing route: ", len(routes) + 1)
+        # print("-- Doing route: ", len(routes) + 1)
         new_route = [0]
         service_start_times = []
         current_time = 0
@@ -81,7 +64,7 @@ def main():
                 ):  # if it arrives on time to that place and has enough capacity to supply
                     new_route.append(idx)
                     pending_customers.drop(index=idx, inplace=True)
-                    print("Remaining customers to visit:", len(pending_customers))
+                    # print("Remaining customers to visit:", len(pending_customers))
 
                     if current_time + this_time < this_customer["earliest"]:
                         current_time = this_customer[
@@ -108,12 +91,22 @@ def main():
         new_route.append(0)
         routes.append(new_route)
         t_k_i.append(service_start_times)
+    
+    return routes, t_k_i
 
-    print("routes:", routes)
-    print("Number of routes", len(routes))
-    # Check if routes are within max routes (vehicle_nr)
 
-    # Reconstruct t_k_i from routes
+def check_routes_are_feasible(routes, t_k_i, customers, capacity):
+    for route, service_start_times in zip(routes, t_k_i):
+        feasible = check_route_is_feasible(
+            route, service_start_times, customers, capacity
+        )
+        if not feasible:
+            break
+    print("Route is feasible" if feasible else "Route is not feasible")
+    return feasible
+
+
+def t_k_i_from_routes(routes, all_times, customers):
     reconstructed_t_k_i = []
     for route in routes:
         current_time = 0
@@ -125,16 +118,37 @@ def main():
             service_start_times.append(current_time)
             current_time += customers.loc[route[i + 1], "cost"]
         reconstructed_t_k_i.append(service_start_times)
+    return reconstructed_t_k_i
 
-    # verify the t_k_is are the same
-    # are_the_same = True
-    # for k in range(len(t_k_i)):
-    #     t_i = t_k_i[k]
-    #     r_t_i = reconstructed_t_k_i[k]
-    #     for i in range(len(t_i)):
-    #         if t_i[i] != r_t_i[i]:
-    #             are_the_same = False
-    # print('The lists are the same' if are_the_same else 'The lists differ')
+
+def compare_t_k_is(t_k_i_1, t_k_i_2):
+    are_the_same = True
+    for k in range(len(t_k_i_1)):
+        t_i_1 = t_k_i_1[k]
+        t_i_2 = t_k_i_2[k]
+        for i in range(len(t_i_1)):
+            if t_i_1[i] != t_i_2[i]:
+                are_the_same = False
+    print("The lists are the same" if are_the_same else "The lists differ")
+
+
+def main():
+    # Parse instance
+    kind = "rc"
+    kind_type = "1"
+    case_number = 1
+    data = parse_instance(kind, kind_type, case_number)
+    _, _, capacity, all_points = data
+    customers = all_points.iloc[1:]
+
+    # Plot instance
+    # depot = all_points.iloc[0]
+    # plot_instance(depot, customers)
+
+    all_times = calculate_times_matrix(all_points)
+
+    # Apply nearest neighbor heuristic
+    routes, t_k_i = nearest_neighbors_heuristic(all_times, customers, capacity)
 
     # Check if routes are indeed feasible
     check_routes_are_feasible(routes, t_k_i, customers, capacity)
