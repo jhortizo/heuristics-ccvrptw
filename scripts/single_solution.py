@@ -1,17 +1,19 @@
-import pandas as pd
+from itertools import product
 
+import pandas as pd
+from tqdm import tqdm
+
+from heuristics_ccvrptw.algorithms import (
+    apply_repair_method,
+    nearest_neighbors_heuristic,
+)
 from heuristics_ccvrptw.constants import CASES_PER_TYPE
 from heuristics_ccvrptw.parse_instances import parse_instance
 from heuristics_ccvrptw.plotter import plot_routes
 from heuristics_ccvrptw.utils import (
+    calculate_cost_function,
     calculate_times_matrix,
     check_routes_are_feasible,
-    calculate_cost_function,
-)
-
-from heuristics_ccvrptw.algorithms import (
-    nearest_neighbors_heuristic,
-    apply_repair_method,
 )
 
 
@@ -59,37 +61,42 @@ def main():
     kinds = ["c", "r", "rc"]
     kind_types = ["1", "2"]
 
-    for kind in kinds:
-        for kind_type in kind_types:
-            for case_number in range(1, CASES_PER_TYPE[kind][kind_type] + 1):
-                instance_name = f"{kind.upper()}{kind_type}{case_number:02d}"
-                ref_vehicle_nr = reference_data.loc[
-                    reference_data["Instance"] == instance_name, "k"
-                ].values[0]
-                print(f"Running {instance_name}")
-                cost, vehicle_nr_obtained, original_vehicle_nr = get_single_solution(
-                    kind,
-                    kind_type,
-                    case_number,
-                    ref_vehicle_nr=ref_vehicle_nr,
-                    plot_instance=False,
-                )
+    cases = product(
+        kinds,
+        kind_types,
+        range(1, max(CASES_PER_TYPE[k][t] for k in kinds for t in kind_types) + 1),
+    )
+    instance_names = []
+    costs = []
+    vehicle_nrs = []
+    for kind, kind_type, case_number in tqdm(cases, desc="Running instances"):
+        if case_number > CASES_PER_TYPE[kind][kind_type]:
+            continue
+        instance_name = f"{kind.upper()}{kind_type}{case_number:02d}"
+        ref_vehicle_nr = reference_data.loc[
+            reference_data["Instance"] == instance_name, "k"
+        ].values[0]
+        cost, vehicle_nr_obtained, original_vehicle_nr = get_single_solution(
+            kind,
+            kind_type,
+            case_number,
+            ref_vehicle_nr=ref_vehicle_nr,
+            plot_instance=False,
+        )
 
-                reference_data.loc[
-                    reference_data["Instance"] == instance_name, "Cost achieved"
-                ] = cost
+        instance_names.append(instance_name)
+        costs.append(cost)
+        vehicle_nrs.append(vehicle_nr_obtained)
 
-                reference_data.loc[
-                    reference_data["Instance"] == instance_name,
-                    "Vehicle number obtained",
-                ] = vehicle_nr_obtained
-
-                reference_data.loc[
-                    reference_data["Instance"] == instance_name,
-                    "Original vehicle number",
-                ] = original_vehicle_nr
-
-    reference_data.to_csv("results_data/instances.csv", index=False)
+    # create dataframe with results
+    results = pd.DataFrame(
+        {
+            "Instance": instance_names,
+            "Cost": costs,
+            "Vehicle number": vehicle_nrs,
+        }
+    )
+    results.to_csv("results/single_solution.csv", index=False)
 
 
 if __name__ == "__main__":
