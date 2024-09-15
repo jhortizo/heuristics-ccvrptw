@@ -35,11 +35,11 @@ def get_single_solution(
 
     assert check_routes_are_feasible(routes, t_k_i, customers, capacity)
 
-    if len(routes) > vehicle_nr:
+    if len(routes) > ref_vehicle_nr:
         # print("Applying repair method")
         repaired_routes, t_k_i = apply_repair_method(
             routes,
-            14,
+            ref_vehicle_nr,
             all_times,
             customers,
             capacity,
