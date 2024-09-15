@@ -6,7 +6,7 @@ import time
 
 from heuristics_ccvrptw.algorithms import (
     apply_repair_method,
-    stochastic_nearest_neighbors_heuristic,
+    stochastic_neighbors_heuristic,
 )
 from heuristics_ccvrptw.constants import CASES_PER_TYPE
 from heuristics_ccvrptw.parse_instances import parse_instance
@@ -41,17 +41,17 @@ def get_multiple_solutions(
     solutions = []
     seed = 0
     while len(costs) < number_of_solutions:
-        routes, t_k_i = stochastic_nearest_neighbors_heuristic(
+        routes, t_k_i = stochastic_neighbors_heuristic(
             all_times, customers, capacity, seed
         )
 
         assert check_routes_are_feasible(routes, t_k_i, customers, capacity)
 
-        if len(routes) > vehicle_nr:
+        if len(routes) > ref_vehicle_nr:
             # print("Applying repair method")
             repaired_routes, t_k_i = apply_repair_method(
                 routes,
-                14,
+                ref_vehicle_nr,
                 all_times,
                 customers,
                 capacity,
@@ -62,7 +62,7 @@ def get_multiple_solutions(
         else:
             repaired_routes = routes
 
-        if repaired_routes in solutions:
+        if repaired_routes in solutions: # TODO: there's a chance here that the routes are the same but ordered differently, and then this would say the solution does not exist in the list
             continue  # in case the solution gets repeated, if the repair method throws it back to the same point
         else:
             solutions.append(repaired_routes)
@@ -76,7 +76,7 @@ def get_multiple_solutions(
             vehicle_nr_obtaineds.append(len(repaired_routes))
         seed += 1
 
-    return cost, len(repaired_routes), vehicle_nr
+    return costs, vehicle_nr_obtaineds, vehicle_nr
 
 
 def main():
