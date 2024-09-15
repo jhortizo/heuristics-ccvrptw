@@ -45,7 +45,7 @@ def load_json_from_file(file_path):
 
 
 def parse_instance(kind: str, kind_type: str, case_number: int):
-    data_dir = "./data"
+    data_dir = "./local_data"
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
     
