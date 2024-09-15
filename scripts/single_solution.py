@@ -2,6 +2,7 @@ from itertools import product
 
 import pandas as pd
 from tqdm import tqdm
+import time
 
 from heuristics_ccvrptw.algorithms import (
     apply_repair_method,
@@ -32,7 +33,7 @@ def get_single_solution(
 
     routes, t_k_i = nearest_neighbors_heuristic(all_times, customers, capacity)
 
-    check_routes_are_feasible(routes, t_k_i, customers, capacity)
+    assert check_routes_are_feasible(routes, t_k_i, customers, capacity)
 
     if len(routes) > vehicle_nr:
         # print("Applying repair method")
@@ -43,7 +44,7 @@ def get_single_solution(
             customers,
             capacity,
         )
-        check_routes_are_feasible(repaired_routes, t_k_i, customers, capacity)
+        assert check_routes_are_feasible(repaired_routes, t_k_i, customers, capacity)
     else:
         repaired_routes = routes
 
@@ -68,7 +69,9 @@ def main():
     )
     instance_names = []
     costs = []
-    vehicle_nrs = []
+    vehicle_nr_obtaineds = []
+    vehicle_nr_originals = []
+    times = []
     for kind, kind_type, case_number in tqdm(cases, desc="Running instances"):
         if case_number > CASES_PER_TYPE[kind][kind_type]:
             continue
@@ -76,6 +79,7 @@ def main():
         ref_vehicle_nr = reference_data.loc[
             reference_data["Instance"] == instance_name, "k"
         ].values[0]
+        init_time = time.time()
         cost, vehicle_nr_obtained, original_vehicle_nr = get_single_solution(
             kind,
             kind_type,
@@ -83,17 +87,20 @@ def main():
             ref_vehicle_nr=ref_vehicle_nr,
             plot_instance=False,
         )
-
+        end_time = time.time()
         instance_names.append(instance_name)
         costs.append(cost)
-        vehicle_nrs.append(vehicle_nr_obtained)
+        vehicle_nr_obtaineds.append(vehicle_nr_obtained)
+        vehicle_nr_originals.append(original_vehicle_nr)
+        times.append(end_time - init_time)
 
     # create dataframe with results
     results = pd.DataFrame(
         {
             "Instance": instance_names,
-            "Cost": costs,
-            "Vehicle number": vehicle_nrs,
+            "Single solution cost": costs,
+            "Vehicle number obtained": vehicle_nr_obtaineds,
+            "Vehicle number original": vehicle_nr_originals,
         }
     )
     results.to_csv("results/single_solution.csv", index=False)
