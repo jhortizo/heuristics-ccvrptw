@@ -182,12 +182,11 @@ def stochastic_neighbors_heuristic(all_times, customers, capacity, seed):
         current_capacity = 0
         can_add_new_point = True
         while can_add_new_point and (len(pending_customers) > 0):
-            times_from_prev = all_times.loc[
-                pending_customers.index, new_route[-1]
-            ].sort_values(ascending=True)
-            random_order = rng.permutation(times_from_prev.index) # add randomness by checking the points in a random order
+            random_order = rng.permutation(pending_customers.index) # add randomness by checking the points in a random order
             for idx in random_order:
-                this_time = times_from_prev[idx]
+                this_time = all_times.loc[
+                    idx, new_route[-1]
+                ]
                 this_customer = customers.loc[idx]
                 if (
                     (this_customer["latest"] > current_time + this_time)
