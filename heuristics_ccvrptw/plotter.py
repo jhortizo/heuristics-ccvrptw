@@ -17,5 +17,4 @@ def plot_routes(routes, all_points):
         plt.plot(route_points["x"], route_points["y"], "-", linewidth=1)
     plt.plot(depot["x"], depot["y"], "rs", markersize=10)
     plt.plot(customers["x"], customers["y"], "bo")
-    plt.savefig("images/routes.png")
     plt.show()

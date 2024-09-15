@@ -154,11 +154,11 @@ def apply_repair_method(routes, vehicle_nr, all_times, customers, capacity):
                 # print("Reallocated route:", min_route)
                 repaired_routes.remove(min_route)
 
-    print(
-        "Reparation done successfully"
-        if reparation_feasible
-        else "Reparation not feasible, number of routes:",
-        len(repaired_routes),
-    )
+    # print(
+    #     "Reparation done successfully"
+    #     if reparation_feasible
+    #     else "Reparation not feasible, number of routes:",
+    #     len(repaired_routes),
+    # )
 
     return repaired_routes, t_k_i_from_routes(repaired_routes, all_times, customers)
