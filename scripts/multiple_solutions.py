@@ -122,7 +122,7 @@ def main():
         )
         min_vehicle_nr_obtaineds.append(min(vehicle_nr_obtaineds))
         vehicle_nr_originals.append(original_vehicle_nr)
-        times.append(end_time - init_time)
+        times.append((end_time - init_time) / number_of_solutions)
 
     # create dataframe with results
     results = pd.DataFrame(
