@@ -37,7 +37,7 @@ def check_routes_are_feasible(routes, t_k_i, customers, capacity):
         )
         if not feasible:
             break
-    print("Route is feasible" if feasible else "Route is not feasible")
+    # print("Route is feasible" if feasible else "Route is not feasible")
     return feasible
 
 
