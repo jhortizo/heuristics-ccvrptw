@@ -127,12 +127,13 @@ def main():
     # create dataframe with results
     results = pd.DataFrame(
         {
-            "Instance": instance_names,
-            "Average cost": avg_costs,
-            "Minimum cost": min_costs,
-            "Average vehicle number obtained": avg_vehicle_nr_obtaineds,
-            "Minimum vehicle number obtained": min_vehicle_nr_obtaineds,
-            "Vehicle number original": vehicle_nr_originals,
+            "instance": instance_names,
+            "average_cost": avg_costs,
+            "minimum_cost": min_costs,
+            "average_vehicle_number_obtained": avg_vehicle_nr_obtaineds,
+            "minimum_vehicle_number_obtained": min_vehicle_nr_obtaineds,
+            "vehicle_number_original": vehicle_nr_originals,
+            "time": times,
         }
     )
     results.to_csv(f"results/multiple_solutions_{number_of_solutions}.csv", index=False)

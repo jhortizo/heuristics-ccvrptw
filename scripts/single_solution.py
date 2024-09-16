@@ -98,9 +98,10 @@ def main():
     results = pd.DataFrame(
         {
             "Instance": instance_names,
-            "Single solution cost": costs,
-            "Vehicle number obtained": vehicle_nr_obtaineds,
-            "Vehicle number original": vehicle_nr_originals,
+            "single_solution_cost": costs,
+            "vehicle_number_obtained": vehicle_nr_obtaineds,
+            "vehicle_number_original": vehicle_nr_originals,
+            "time": times,
         }
     )
     results.to_csv("results/single_solution.csv", index=False)
