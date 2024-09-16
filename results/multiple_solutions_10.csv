@@ -1,4 +1,4 @@
-instance,average_cost,minimum_cost,average_vehicle_number_obtained,minimum_vehicle_number_obtained,vehicle_number_original,time
+Instance,average_cost,minimum_cost,average_vehicle_number_obtained,minimum_vehicle_number_obtained,vehicle_number_original,time
 C101,44502.380051521664,44214.464219889196,13.7,13,25,1.9356952905654907
 C102,50891.35309259647,48844.95302846605,12.7,12,25,2.229249882698059
 C103,56705.27064282944,54752.424853068536,11.6,11,25,2.3268157958984377
