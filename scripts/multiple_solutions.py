@@ -127,7 +127,7 @@ def main():
     # create dataframe with results
     results = pd.DataFrame(
         {
-            "instance": instance_names,
+            "Instance": instance_names,
             "average_cost": avg_costs,
             "minimum_cost": min_costs,
             "average_vehicle_number_obtained": avg_vehicle_nr_obtaineds,
