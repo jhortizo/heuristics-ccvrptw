@@ -1,16 +1,16 @@
+import time
 from itertools import product
 
 import pandas as pd
 from tqdm import tqdm
-import time
 
-from heuristics_ccvrptw.algorithms import (
-    apply_repair_method,
+from heuristics_ccvrptw.constants import CASES_PER_TYPE
+from heuristics_ccvrptw.construction_algorithms import (
     nearest_neighbors_heuristic,
 )
-from heuristics_ccvrptw.constants import CASES_PER_TYPE
 from heuristics_ccvrptw.parse_instances import parse_instance
 from heuristics_ccvrptw.plotter import plot_routes
+from heuristics_ccvrptw.repair_method import apply_repair_method
 from heuristics_ccvrptw.utils import (
     calculate_cost_function,
     calculate_times_matrix,

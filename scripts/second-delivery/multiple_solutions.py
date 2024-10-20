@@ -1,16 +1,16 @@
+import time
 from itertools import product
 
 import pandas as pd
 from tqdm import tqdm
-import time
 
-from heuristics_ccvrptw.algorithms import (
-    apply_repair_method,
+from heuristics_ccvrptw.constants import CASES_PER_TYPE
+from heuristics_ccvrptw.construction_algorithms import (
     stochastic_neighbors_heuristic,
 )
-from heuristics_ccvrptw.constants import CASES_PER_TYPE
 from heuristics_ccvrptw.parse_instances import parse_instance
 from heuristics_ccvrptw.plotter import plot_routes
+from heuristics_ccvrptw.repair_method import apply_repair_method
 from heuristics_ccvrptw.utils import (
     calculate_cost_function,
     calculate_times_matrix,
@@ -62,7 +62,9 @@ def get_multiple_solutions(
         else:
             repaired_routes = routes
 
-        if repaired_routes in solutions: # TODO: there's a chance here that the routes are the same but ordered differently, and then this would say the solution does not exist in the list
+        if (
+            repaired_routes in solutions
+        ):  # TODO: there's a chance here that the routes are the same but ordered differently, and then this would say the solution does not exist in the list
             continue  # in case the solution gets repeated, if the repair method throws it back to the same point
         else:
             solutions.append(repaired_routes)
@@ -136,7 +138,10 @@ def main():
             "time": times,
         }
     )
-    results.to_csv(f"results/second-delivery/multiple_solutions_{number_of_solutions}.csv", index=False)
+    results.to_csv(
+        f"results/second-delivery/multiple_solutions_{number_of_solutions}.csv",
+        index=False,
+    )
 
 
 if __name__ == "__main__":
