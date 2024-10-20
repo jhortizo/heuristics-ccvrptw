@@ -8,7 +8,9 @@ from heuristics_ccvrptw.constants import CASES_PER_TYPE
 from heuristics_ccvrptw.construction_algorithms import (
     nearest_neighbors_heuristic,
 )
-from heuristics_ccvrptw.intensification_algorithms import local_search_2opt_intensification
+from heuristics_ccvrptw.intensification_algorithms import (
+    local_search_2opt_intensification,
+)
 from heuristics_ccvrptw.parse_instances import parse_instance
 from heuristics_ccvrptw.plotter import plot_routes
 from heuristics_ccvrptw.repair_method import apply_repair_method
@@ -50,10 +52,15 @@ def get_single_solution_and_intensify(
         repaired_routes = routes
 
     cost = calculate_cost_function(t_k_i)
+    init_time = time.time()
 
-    best_local_routes, best_local_t_k_i, best_local_cost = local_search_2opt_intensification(
-        repaired_routes, t_k_i, cost, all_times, customers, capacity
+    best_local_routes, best_local_t_k_i, best_local_cost = (
+        local_search_2opt_intensification(
+            repaired_routes, t_k_i, cost, all_times, customers, capacity
+        )
     )
+
+    end_time = time.time()
 
     # TODO: Consider applying repair method here to potentially reduce the number of vehicles further
 
@@ -62,7 +69,7 @@ def get_single_solution_and_intensify(
     if plot_instance:
         plot_routes(repaired_routes, all_points)
 
-    return best_local_cost, len(best_local_routes), vehicle_nr
+    return best_local_cost, len(best_local_routes), vehicle_nr, end_time - init_time
 
 
 def main():
@@ -87,8 +94,7 @@ def main():
         ref_vehicle_nr = reference_data.loc[
             reference_data["Instance"] == instance_name, "k"
         ].values[0]
-        init_time = time.time()
-        cost, vehicle_nr_obtained, original_vehicle_nr = (
+        cost, vehicle_nr_obtained, original_vehicle_nr, time = (
             get_single_solution_and_intensify(
                 kind,
                 kind_type,
@@ -97,24 +103,23 @@ def main():
                 plot_instance=False,
             )
         )
-        end_time = time.time()
         instance_names.append(instance_name)
         costs.append(cost)
         vehicle_nr_obtaineds.append(vehicle_nr_obtained)
         vehicle_nr_originals.append(original_vehicle_nr)
-        times.append(end_time - init_time)
+        times.append(time)
 
     # create dataframe with results
     results = pd.DataFrame(
         {
             "Instance": instance_names,
-            "single_solution_cost": costs,
+            "local_optimum_solution_cost": costs,
             "vehicle_number_obtained": vehicle_nr_obtaineds,
             "vehicle_number_original": vehicle_nr_originals,
             "time": times,
         }
     )
-    results.to_csv("results/second-delivery/single_solution.csv", index=False)
+    results.to_csv("results/third-delivery/two_opt_intensification.csv", index=False)
 
 
 if __name__ == "__main__":
