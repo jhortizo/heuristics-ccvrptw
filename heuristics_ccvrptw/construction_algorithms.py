@@ -1,11 +1,5 @@
 import numpy as np
 
-from heuristics_ccvrptw.utils import (
-    check_route_is_feasible,
-    service_start_times_from_route,
-    t_k_i_from_routes,
-)
-
 
 def nearest_neighbors_heuristic(all_times, customers, capacity):
     routes = []
