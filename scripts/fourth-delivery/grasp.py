@@ -88,10 +88,18 @@ def get_multiple_solution_and_intensify(
     best_local_routess = []
     best_local_t_k_is = []
     best_local_costs = []
-    for repaired_routes, t_k_i, cost in zip(solutions, t_k_is, costs):
+    for repaired_routes, t_k_i, cost in tqdm(
+        zip(solutions, t_k_is, costs), desc="\t Intensifying solutions"
+    ):
         best_local_routes, best_local_t_k_i, best_local_cost = (
             local_search_2opt_intensification(
-                repaired_routes, t_k_i, cost, all_times, customers, capacity, max_iter=50
+                repaired_routes,
+                t_k_i,
+                cost,
+                all_times,
+                customers,
+                capacity,
+                max_iter=50,
             )
         )
         best_local_routess.append(best_local_routes)
@@ -99,8 +107,8 @@ def get_multiple_solution_and_intensify(
         best_local_costs.append(best_local_cost)
 
     # get best local cost and route
-    best_local_cost = min(best_local_costs)
-    best_local_routes = best_local_routess[best_local_costs.index(best_local_cost)]
+    best_overall_cost = min(best_local_costs)
+    best_overall_routes = best_local_routess[best_local_costs.index(best_local_cost)]
 
     end_time = time.time()
 
@@ -109,7 +117,7 @@ def get_multiple_solution_and_intensify(
     # print("Cost:", best_local_cost)
     # print("Number of routes:", len(best_local_routes), "Vehicle number:", vehicle_nr)
 
-    return best_local_cost, len(best_local_routes), vehicle_nr, end_time - init_time
+    return best_overall_cost, len(best_overall_routes), vehicle_nr, end_time - init_time
 
 
 def main():

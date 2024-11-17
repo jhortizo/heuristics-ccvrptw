@@ -48,7 +48,7 @@ def single_two_opt_intensification(
 ):
     # generate the whole neighborhood
     neighborhood = generate_2opt_neighborhood(initial_routes)
-    print("Size of neighborhood:", len(neighborhood))
+    # print("Size of neighborhood:", len(neighborhood))
 
     # eval cost of the neighborhood
     t_k_is = []
@@ -100,7 +100,7 @@ def local_search_2opt_intensification(
     best_cost = initial_routes_cost
 
     for iter in range(max_iter):
-        print("Iteration:", iter)
+        # print("Iteration:", iter)
         # apply 2-opt intensification
         new_routes, new_t_k_i, new_cost = single_two_opt_intensification(
             best_routes, best_t_k_i, best_cost, all_times, customers, capacity
