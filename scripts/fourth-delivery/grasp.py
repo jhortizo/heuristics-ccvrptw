@@ -116,6 +116,7 @@ def main():
     reference_data = pd.read_csv("reference_data/instances.csv")
     kinds = ["c", "r", "rc"]
     kind_types = ["1", "2"]
+    number_of_solutions = 5
 
     cases = product(
         kinds,
@@ -139,6 +140,7 @@ def main():
                 kind,
                 kind_type,
                 case_number,
+                number_of_solutions,
                 ref_vehicle_nr=ref_vehicle_nr,
                 plot_instance=False,
             )
