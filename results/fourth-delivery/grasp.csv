@@ -1,4 +1,4 @@
-Instance,local_optimum_solution_cost,vehicle_number_obtained,vehicle_number_original,time
+Instance,grasp_optimum_solution_cost,vehicle_number_obtained,vehicle_number_original,time
 C101,44214.464219889196,14,25,10.651833772659302
 C102,48184.563264470075,13,25,45.960590839385986
 C103,48900.89392209819,12,25,338.8163740634918
