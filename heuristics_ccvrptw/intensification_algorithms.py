@@ -112,7 +112,7 @@ def local_search_2opt_intensification(
 
         best_routes, best_t_k_i, best_cost = new_routes, new_t_k_i, new_cost
 
-        # TODO: we could try and apply a repair method here, between each neighborhood, to potentially reduce the number 
+        # TODO: we could try and apply a repair method here, between each neighborhood, to potentially reduce the number
         # of vehicles further
 
     return best_routes, best_t_k_i, best_cost
