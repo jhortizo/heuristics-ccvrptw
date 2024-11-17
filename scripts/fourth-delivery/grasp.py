@@ -88,10 +88,10 @@ def get_multiple_solution_and_intensify(
     best_local_routess = []
     best_local_t_k_is = []
     best_local_costs = []
-    for repaired_routes, t_k_i in zip(solutions, t_k_is):
+    for repaired_routes, t_k_i, cost in zip(solutions, t_k_is, costs):
         best_local_routes, best_local_t_k_i, best_local_cost = (
             local_search_2opt_intensification(
-                repaired_routes, t_k_i, cost, all_times, customers, capacity
+                repaired_routes, t_k_i, cost, all_times, customers, capacity, max_iter=50
             )
         )
         best_local_routess.append(best_local_routes)
@@ -116,7 +116,7 @@ def main():
     reference_data = pd.read_csv("reference_data/instances.csv")
     kinds = ["c", "r", "rc"]
     kind_types = ["1", "2"]
-    number_of_solutions = 5
+    number_of_solutions = 10
 
     cases = product(
         kinds,
@@ -128,7 +128,7 @@ def main():
     vehicle_nr_obtaineds = []
     vehicle_nr_originals = []
     times = []
-    for kind, kind_type, case_number in tqdm(cases, desc="Running instances"):
+    for kind, kind_type, case_number in tqdm(cases, desc="\t\tRunning instances"):
         if case_number > CASES_PER_TYPE[kind][kind_type]:
             continue
         instance_name = f"{kind.upper()}{kind_type}{case_number:02d}"
