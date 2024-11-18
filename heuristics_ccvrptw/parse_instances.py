@@ -35,12 +35,12 @@ def download_url_json(url: str):
 
 
 def save_json_to_file(data, file_path):
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         json.dump(data, f)
 
 
 def load_json_from_file(file_path):
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         return json.load(f)
 
 
@@ -48,9 +48,9 @@ def parse_instance(kind: str, kind_type: str, case_number: int):
     data_dir = "./local_data"
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
-    
+
     file_path = os.path.join(data_dir, f"{kind}_{kind_type}_{case_number}.json")
-    
+
     if os.path.exists(file_path):
         data = load_json_from_file(file_path)
     else:
@@ -59,7 +59,9 @@ def parse_instance(kind: str, kind_type: str, case_number: int):
         if data is not None:
             save_json_to_file(data, file_path)
         else:
-            raise ValueError(f"Failed to download data for {kind} {kind_type} {case_number}")
+            raise ValueError(
+                f"Failed to download data for {kind} {kind_type} {case_number}"
+            )
 
     instance_name = data["instance"]
     vehicle_nr = data["vehicle-nr"]

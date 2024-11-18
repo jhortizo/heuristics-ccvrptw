@@ -5,11 +5,15 @@ Solving the Cumulative Capacitated Vehicle Routing Problem with Time Window (CCV
 
 I am using [poetry](https://python-poetry.org/) for virtual environment dependencies management. Feel free to use it or directly install the requirements from the `pyproject.toml`. You could use a default environment with common libraries installed, it should work without problem.
 
-The scripts `single_solution.py` and `multiple_solutions.py` contain the code to run, and the results get saved in `results` folder (also included in the repository). The folder `heuristic_ccvrptw` contains modules with utility functions.
+The scripts in the `scripts` folders contain the code to run, separated by different stages of the project (deliveries for the course), and the results get saved in `results` folder (also included in the repository). The folder `heuristic_ccvrptw` contains modules with utility functions.
 
 The data within `reference_data` is retrieved from [1], which is the main reference for this paper. The codes here are based on the studies presented there.
 
 This repository also uses the data from the well-known Solomon instances for the VRP problem [2]. They are accesed from [CervEdin/solomon-vrptw-benchmarks](https://github.com/CervEdin/solomon-vrptw-benchmarks/tree/main) repository programmatically, so the code downloads them automatically if required.
+
+### What about the `first-delivery` folder?
+
+The first delivery for the course project is a Literature Review, so it's not available here. I chose to respect that numueration, so there is no `first-delivery` here.
 
 ## References
 
